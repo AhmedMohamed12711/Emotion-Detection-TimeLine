@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmotiOnAI - Advanced Emotion Detection Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --color-joy: #FBBF24;
+      --color-anger: #EF4444;
+      --color-fear: #10B981;
+      --color-sadness: #3B82F6;
+      --color-surprise: #F472B6;
+      --color-disgust: #14B8A6;
+      --color-neutral: #9CA3AF;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+      background-attachment: fixed;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 50%, #F472B6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .glassmorphism {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+      border-color: rgba(99, 102, 241, 0.5);
+    }
+
+    .emotion-badge {
+      animation: pulse-badge 2s infinite;
+    }
+
+    @keyframes pulse-badge {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .slide-in-right {
+      animation: slideInRight 0.4s ease-out;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .glow-text {
+      text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+    }
+
+    .active-history {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3));
+      border-left: 4px solid #60A5FA;
+      box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .cached-badge {
+      background: linear-gradient(135deg, #10B981, #14B8A6);
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .text-gradient {
+      background: linear-gradient(90deg, #60A5FA, #F472B6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .notification {
+      animation: slideInNotif 0.4s ease-out;
+    }
+
+    @keyframes slideInNotif {
+      from {
+        opacity: 0;
+        transform: translateX(400px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .emotion-circle {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: bold;
+      color: white;
+      font-size: 28px;
+    }
+
+    .scroll-smooth::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .scroll-smooth::-webkit-scrollbar-track {
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 10px;
+    }
+
+    .scroll-smooth::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #60A5FA, #F472B6);
+      border-radius: 10px;
+    }
+
+    .scroll-smooth::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #3B82F6, #EC4899);
+    }
+
+    .progress-bar {
+      transition: width 0.5s ease-out;
+    }
+
+    .text-input-glass {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      backdrop-filter: blur(5px);
+    }
+
+    .text-input-glass:focus {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(99, 102, 241, 0.6);
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-gradient {
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+      transition: all 0.3s ease;
+    }
+
+    .btn-gradient:hover {
+      background: linear-gradient(135deg, #2563EB, #7C3AED);
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .chart-container {
+      position: relative;
+      height: 400px;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05), rgba(99, 102, 241, 0.1));
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="text-gray-100 min-h-screen">
+
+  <!-- Navigation Bar -->
+  <nav class="glassmorphism sticky top-0 z-50 border-b border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center gap-3">
+          <div class="text-2xl">🎯</div>
+          <span class="text-xl font-bold gradient-text">EMOTRA</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <span class="text-sm text-gray-400">v2.0</span>
+          <button onclick="clearAllHistory()"
+            class="px-3 py-1 bg-red-500/20 hover:bg-red-500/40 rounded-lg text-red-300 transition text-sm">
+            <i class="fas fa-trash"></i> Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Notification Container -->
+  <div id="notification-container" class="fixed top-20 right-4 space-y-2 z-50"></div>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header Section -->
+    <div class="mb-12 fade-in">
+      <h1 class="text-5xl font-bold mb-3 gradient-text">Emotion Detection Platform</h1>
+      <p class="text-gray-400 text-lg">Advanced AI-powered emotion analysis with intelligent caching & real-time
+        analytics</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- LEFT SECTION: Input & Analysis -->
+      <div class="lg:col-span-2 space-y-8">
+
+        <!-- Input Card -->
+        <div class="glassmorphism p-8 rounded-2xl border border-gray-700 card-hover fade-in">
+          <div class="flex items-center gap-3 mb-4">
+            <i class="fas fa-pen-to-square text-indigo-400 text-xl"></i>
+            <h2 class="text-2xl font-bold">Analyze Emotion</h2>
+          </div>
+          <p class="text-gray-400 text-sm mb-4">Enter text to detect emotions using our advanced AI model</p>
+
+          <textarea id="text-input"
+            class="w-full h-40 p-4 text-input-glass text-white rounded-xl focus:outline-none resize-none"
+            placeholder="Enter the text you want to analyze...&#10;Example: I'm so happy with this amazing result! 😊"></textarea>
+
+          <div class="flex gap-3 mt-6">
+            <button id="analyze-button"
+              class="flex-1 btn-gradient text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
+              onclick="analyzeText()">
+              <i class="fas fa-wand-magic-sparkles"></i> Analyze Emotion
+            </button>
+            <button onclick="clearInput()"
+              class="px-6 py-3 bg-gray-700/50 hover:bg-gray-700 rounded-xl transition text-gray-300">
+              <i class="fas fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Result Card -->
+        <div id="current-result" class="glassmorphism p-8 rounded-2xl border border-gray-700 fade-in">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <i class="fas fa-chart-pie text-indigo-400 text-xl"></i>
+              <h2 class="text-2xl font-bold">Result</h2>
+            </div>
+            <div id="result-badge" class="hidden">
+              <span id="badge-text"
+                class="cached-badge px-4 py-2 rounded-full text-sm font-semibold text-white flex items-center gap-2">
+                <i class="fas fa-bolt"></i> <span id="badge-message">From Cache</span>
+              </span>
+            </div>
+          </div>
+          <div id="result-content" class="text-gray-400">
+            <p class="text-center py-8"><i class="fas fa-inbox text-3xl text-gray-600 mb-3"></i><br>No analysis yet.
+              Enter text and click analyze.</p>
+          </div>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="stat-card p-6 rounded-xl backdrop-blur-sm">
+            <p class="text-gray-400 text-sm mb-2"><i class="fas fa-microscope mr-2"></i>Total Tests</p>
+            <p id="stat-total" class="text-3xl font-bold text-indigo-400">0</p>
+          </div>
+          <div class="stat-card p-6 rounded-xl backdrop-blur-sm">
+            <p class="text-gray-400 text-sm mb-2"><i class="fas fa-bullseye mr-2"></i>Unique Tests</p>
+            <p id="stat-unique" class="text-3xl font-bold text-purple-400">0</p>
+          </div>
+          <div class="stat-card p-6 rounded-xl backdrop-blur-sm">
+            <p class="text-gray-400 text-sm mb-2"><i class="fas fa-percent mr-2"></i>Avg Confidence</p>
+            <p id="stat-avg-confidence" class="text-3xl font-bold text-pink-400">0%</p>
+          </div>
+          <div class="stat-card p-6 rounded-xl backdrop-blur-sm">
+            <p class="text-gray-400 text-sm mb-2"><i class="fas fa-crown mr-2"></i>Most Common</p>
+            <p id="stat-most-common" class="text-3xl font-bold text-yellow-400">N/A</p>
+          </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+          <!-- Emotion Distribution -->
+          <div class="glassmorphism p-6 rounded-2xl border border-gray-700 card-hover">
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i
+                class="fas fa-chart-bar text-indigo-400"></i>Distribution</h3>
+            <div class="chart-container">
+              <canvas id="emotion-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Confidence Analysis -->
+          <div class="glassmorphism p-6 rounded-2xl border border-gray-700 card-hover">
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i
+                class="fas fa-ring text-pink-400"></i>Confidence</h3>
+            <div class="chart-container">
+              <canvas id="confidence-chart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Radar Chart -->
+        <div class="glassmorphism p-6 rounded-2xl border border-gray-700 card-hover">
+          <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="fas fa-radar text-purple-400"></i>Emotion
+            Profile</h3>
+          <div class="chart-container">
+            <canvas id="radar-chart"></canvas>
+          </div>
+        </div>
+
+        <!-- Individual Analysis -->
+        <div class="glassmorphism p-8 rounded-2xl border border-gray-700">
+          <h2 class="text-2xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-list text-teal-400"></i>Recent
+            Tests</h2>
+          <div id="individual-analysis" class="space-y-4">
+            <p class="text-gray-500 text-center py-8"><i
+                class="fas fa-hourglass-end text-3xl text-gray-600 mb-3"></i><br>No tests yet...</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT SECTION: History & Info -->
+      <div class="lg:col-span-1">
+
+        <!-- History Log -->
+        <div
+          class="glassmorphism p-6 rounded-2xl border border-gray-700 sticky top-24 max-h-[85vh] overflow-y-auto scroll-smooth fade-in">
+          <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-700">
+            <h2 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-clock text-blue-400"></i>History</h2>
+            <span id="history-count" class="bg-indigo-500/30 px-2 py-1 rounded text-xs font-semibold">0</span>
+          </div>
+          <div id="history-log" class="space-y-3">
+            <p class="text-gray-500 text-center py-8"><i class="fas fa-inbox text-3xl text-gray-600 mb-3"></i><br>No
+              history yet</p>
+          </div>
+        </div>
+
+
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-700 mt-20 py-8 glassmorphism">
+    <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>🚀 EmotiOnAI v2.0 | Powered by Advanced Emotion Detection | All data stored locally</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    // Constants
+    const API_ENDPOINT = 'http://127.0.0.1:8000/emotion/text_model';
+    const HISTORY_KEY = 'emotionAnalysisHistory';
+    const TEXT_HASH_KEY = 'textAnalysisHashMap';
+
+    let emotionChart, confidenceChart, radarChart;
+    let currentActiveItem = null;
+
+    const emotionColors = {
+      'joy': '#FBBF24',
+      'anger': '#EF4444',
+      'fear': '#10B981',
+      'sadness': '#3B82F6',
+      'surprise': '#F472B6',
+      'disgust': '#14B8A6',
+      'neutral': '#9CA3AF',
+    };
+
+    const emotionEmojis = {
+      'joy': '😊',
+      'anger': '😠',
+      'fear': '😨',
+      'sadness': '😢',
+      'surprise': '😮',
+      'disgust': '🤢',
+      'neutral': '😐',
+    };
+
+    // --- UTILITY FUNCTIONS ---
+
+    const normalizeText = (text) => text.trim().toLowerCase();
+
+    const showNotification = (message, type = 'info', duration = 3000) => {
+      const container = document.getElementById('notification-container');
+      const colors = {
+        success: 'bg-green-500/90 border-green-400',
+        warning: 'bg-yellow-500/90 border-yellow-400',
+        error: 'bg-red-500/90 border-red-400',
+        info: 'bg-blue-500/90 border-blue-400'
+      };
+
+      const icons = {
+        success: 'fa-check-circle',
+        warning: 'fa-exclamation-triangle',
+        error: 'fa-times-circle',
+        info: 'fa-info-circle'
+      };
+
+      const notification = document.createElement('div');
+      notification.className = `notification ${colors[type]} border backdrop-blur-sm text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3`;
+      notification.innerHTML = `
+        <i class="fas ${icons[type]}"></i>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(notification);
+
+      setTimeout(() => {
+        notification.style.animation = 'slideInNotif 0.4s ease-out reverse';
+        setTimeout(() => notification.remove(), 400);
+      }, duration);
+    };
+
+    window.clearInput = () => {
+      document.getElementById('text-input').value = '';
+      document.getElementById('text-input').focus();
+    };
+
+    window.clearAllHistory = () => {
+      if (confirm('🗑️ Clear all history? This cannot be undone.')) {
+        localStorage.removeItem(HISTORY_KEY);
+        localStorage.removeItem(TEXT_HASH_KEY);
+        document.getElementById('history-log').innerHTML = '<p class="text-gray-500 text-center py-8"><i class="fas fa-inbox text-3xl text-gray-600 mb-3"></i><br>No history yet</p>';
+        updateAllCharts([]);
+        updateAggregateStats([]);
+        updateIndividualAnalysis([]);
+        showNotification('History cleared successfully', 'warning');
+      }
+    };
+
+    // --- LOCAL STORAGE ---
+
+    const loadHistoryFromLocalStorage = () => {
+      try {
+        const historyJson = localStorage.getItem(HISTORY_KEY);
+        return historyJson ? JSON.parse(historyJson) : [];
+      } catch (e) {
+        console.error("Error loading history:", e);
+        return [];
+      }
+    };
+
+    const saveHistoryToLocalStorage = (history) => {
+      try {
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      } catch (e) {
+        console.error("Error saving history:", e);
+      }
+    };
+
+    const loadTextHashMap = () => {
+      try {
+        const mapJson = localStorage.getItem(TEXT_HASH_KEY);
+        return mapJson ? JSON.parse(mapJson) : {};
+      } catch (e) {
+        console.error("Error loading hash map:", e);
+        return {};
+      }
+    };
+
+    const saveTextHashMap = (hashMap) => {
+      try {
+        localStorage.setItem(TEXT_HASH_KEY, JSON.stringify(hashMap));
+      } catch (e) {
+        console.error("Error saving hash map:", e);
+      }
+    };
+
+    // Find duplicate analysis
+    const findDuplicateAnalysis = (text) => {
+      const normalizedInputText = normalizeText(text);
+      const history = loadHistoryFromLocalStorage();
+
+      const duplicate = history.find(item =>
+        normalizeText(item.text) === normalizedInputText
+      );
+
+      return duplicate || null;
+    };
+
+    const updateHistoryAndUI = (newResult, isFromCache = false) => {
+      const historyData = loadHistoryFromLocalStorage();
+      const timestamp = new Date().getTime();
+      const resultWithTimestamp = { ...newResult, timestamp_ms: timestamp, fromCache: isFromCache };
+
+      // Move to top and limit to 50
+      historyData.unshift(resultWithTimestamp);
+      if (historyData.length > 50) {
+        historyData.pop();
+      }
+
+      saveHistoryToLocalStorage(historyData);
+      renderHistoryLog(historyData);
+      updateAllCharts(historyData);
+      updateAggregateStats(historyData);
+      updateIndividualAnalysis(historyData);
+
+      document.getElementById('history-count').textContent = historyData.length;
+    };
+
+    // --- RENDERING ---
+
+    const renderHistoryLog = (history) => {
+      const logEl = document.getElementById('history-log');
+      logEl.innerHTML = '';
+
+      if (history.length === 0) {
+        logEl.innerHTML = '<p class="text-gray-500 text-center py-8"><i class="fas fa-inbox text-3xl text-gray-600 mb-3"></i><br>No history yet</p>';
+        return;
+      }
+
+      history.forEach((item, index) => {
+        const date = item.timestamp_ms ? new Date(item.timestamp_ms).toLocaleTimeString() : 'N/A';
+        const color = emotionColors[item.dominant_emotion.label.toLowerCase()] || emotionColors['neutral'];
+        const emoji = emotionEmojis[item.dominant_emotion.label.toLowerCase()] || '😐';
+        const cacheTag = item.fromCache ? '<span class="text-xs bg-green-500/30 text-green-300 px-2 py-1 rounded ml-2">⚡ Cached</span>' : '';
+
+        const itemHtml = `
+          <div class="glassmorphism p-4 rounded-lg border border-gray-700 hover:border-indigo-500 transition cursor-pointer card-hover"
+               onclick="showDetails('${encodeURIComponent(JSON.stringify(item))}')"
+               style="border-left: 3px solid ${color};">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-2xl">${emoji}</span>
+                <div>
+                  <p class="text-sm font-semibold uppercase" style="color: ${color};">${item.dominant_emotion.label}</p>
+                  <p class="text-xs text-gray-500">${item.dominant_emotion.confidence_percent}% confident</p>
+                </div>
+              </div>
+              <span class="text-xs text-gray-500">${date}</span>
+            </div>
+            <p class="text-xs text-gray-400 truncate">"${item.text.substring(0, 40)}${item.text.length > 40 ? '...' : ''}"</p>
+            ${cacheTag}
+          </div>
+        `;
+        logEl.insertAdjacentHTML('beforeend', itemHtml);
+      });
+    };
+
+    window.showDetails = (encodedItem) => {
+      try {
+        const item = JSON.parse(decodeURIComponent(encodedItem));
+        renderResult(item);
+        document.getElementById('text-input').value = item.text;
+        document.querySelector('main').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (e) {
+        console.error("Could not parse history item:", e);
+      }
+    };
+
+    const renderResult = (result) => {
+      const contentEl = document.getElementById('result-content');
+      const dominant = result.dominant_emotion;
+      const color = emotionColors[dominant.label.toLowerCase()] || emotionColors['neutral'];
+      const emoji = emotionEmojis[dominant.label.toLowerCase()] || '😐';
+
+      let detailsHtml = `
+        <div class="space-y-6">
+          <!-- Main Result Display -->
+          <div class="flex items-center gap-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 p-6 rounded-xl border border-indigo-500/30">
+            <div class="emotion-circle" style="background: linear-gradient(135deg, ${color}, ${color}CC);">
+              ${emoji}
+            </div>
+            <div>
+              <p class="text-sm text-gray-400">Detected Emotion</p>
+              <p class="text-4xl font-bold uppercase" style="color: ${color};">${dominant.label}</p>
+              <p class="text-lg font-semibold text-gray-300 mt-2">${dominant.confidence_percent}% Confidence</p>
+            </div>
+          </div>
+
+          <!-- Text Analysis -->
+          <div class="border-t border-gray-700 pt-4">
+            <p class="text-sm text-gray-400 mb-2">📝 Analyzed Text:</p>
+            <p class="text-gray-200 italic p-3 bg-gray-900/50 rounded-lg">"${result.text}"</p>
+          </div>
+
+          <!-- Metadata -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-gray-900/50 p-3 rounded-lg">
+              <p class="text-xs text-gray-500">Characters</p>
+              <p class="text-xl font-bold text-indigo-400">${result.input_length}</p>
+            </div>
+            <div class="bg-gray-900/50 p-3 rounded-lg">
+              <p class="text-xs text-gray-500">Tokens</p>
+              <p class="text-xl font-bold text-purple-400">${result.token_count}</p>
+            </div>
+            <div class="bg-gray-900/50 p-3 rounded-lg">
+              <p class="text-xs text-gray-500">Processing</p>
+              <p class="text-xl font-bold text-pink-400">${result.processing_time_ms}ms</p>
+            </div>
+            <div class="bg-gray-900/50 p-3 rounded-lg">
+              <p class="text-xs text-gray-500">Device</p>
+              <p class="text-xl font-bold text-teal-400">${result.model_info.device_used.toUpperCase()}</p>
+            </div>
+          </div>
+
+          <!-- All Emotion Scores -->
+          <div class="border-t border-gray-700 pt-4">
+            <p class="text-sm font-semibold text-gray-300 mb-3">📊 All Emotion Scores:</p>
+            <div class="space-y-2">
+      `;
+
+      result.results.forEach(score => {
+        const barColor = emotionColors[score.label.toLowerCase()] || emotionColors['neutral'];
+        const scoreEmoji = emotionEmojis[score.label.toLowerCase()] || '😐';
+        detailsHtml += `
+          <div class="space-y-1">
+            <div class="flex items-center justify-between text-sm">
+              <span class="flex items-center gap-2"><span>${scoreEmoji}</span><span class="uppercase font-semibold">${score.label}</span></span>
+              <span class="text-white font-bold">${score.confidence_percent}%</span>
+            </div>
+            <div class="w-full bg-gray-900/50 rounded-full h-3 overflow-hidden border border-gray-700">
+              <div class="progress-bar h-full rounded-full transition-all duration-500" 
+                   style="width: ${score.confidence_percent}%; background: linear-gradient(90deg, ${barColor}, ${barColor}CC);"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      detailsHtml += `
+            </div>
+          </div>
+
+          <!-- Model Info -->
+          <div class="border-t border-gray-700 pt-4 text-xs text-gray-500">
+            <p>Model: <span class="text-gray-300">${result.model_info.name}</span></p>
+            <p>Version: <span class="text-gray-300">${result.model_info.version}</span></p>
+          </div>
+        </div>
+      `;
+
+      contentEl.innerHTML = detailsHtml;
+    };
+
+    // --- STATISTICS ---
+
+    const updateAggregateStats = (history) => {
+      if (history.length === 0) {
+        document.getElementById('stat-total').textContent = '0';
+        document.getElementById('stat-unique').textContent = '0';
+        document.getElementById('stat-avg-confidence').textContent = '0%';
+        document.getElementById('stat-most-common').textContent = 'N/A';
+        return;
+      }
+
+      // Total tests
+      document.getElementById('stat-total').textContent = history.length;
+
+      // Unique tests
+      const uniqueTexts = new Set(history.map(item => normalizeText(item.text)));
+      document.getElementById('stat-unique').textContent = uniqueTexts.size;
+
+      // Average confidence
+      const avgConfidence = (history.reduce((sum, item) => sum + item.dominant_emotion.confidence_percent, 0) / history.length).toFixed(1);
+      document.getElementById('stat-avg-confidence').textContent = avgConfidence + '%';
+
+      // Most common emotion
+      const emotionCounts = {};
+      history.forEach(item => {
+        const label = item.dominant_emotion.label;
+        emotionCounts[label] = (emotionCounts[label] || 0) + 1;
+      });
+      const mostCommon = Object.keys(emotionCounts).reduce((a, b) => emotionCounts[a] > emotionCounts[b] ? a : b);
+      const emoji = emotionEmojis[mostCommon.toLowerCase()] || '😐';
+      document.getElementById('stat-most-common').textContent = emoji + ' ' + mostCommon.charAt(0).toUpperCase() + mostCommon.slice(1);
+    };
+
+    // --- INDIVIDUAL ANALYSIS ---
+
+    const updateIndividualAnalysis = (history) => {
+      const container = document.getElementById('individual-analysis');
+
+      if (history.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-8"><i class="fas fa-hourglass-end text-3xl text-gray-600 mb-3"></i><br>No tests yet...</p>';
+        return;
+      }
+
+      let analysisHtml = '';
+
+      history.slice(0, 8).forEach((item, index) => {
+        const dominant = item.dominant_emotion;
+        const color = emotionColors[dominant.label.toLowerCase()] || emotionColors['neutral'];
+        const emoji = emotionEmojis[dominant.label.toLowerCase()] || '😐';
+        const date = item.timestamp_ms ? new Date(item.timestamp_ms).toLocaleTimeString() : 'N/A';
+        const cacheTag = item.fromCache ? '<span class="text-xs bg-green-500/30 text-green-300 px-2 py-1 rounded">⚡ Cached</span>' : '';
+
+        const topThree = item.results.slice(0, 3).map((r, i) => {
+          const topEmoji = emotionEmojis[r.label.toLowerCase()] || '😐';
+          return `<span class="inline-block mr-3"><span class="font-semibold">${topEmoji} ${r.label}</span> ${r.confidence_percent}%</span>`;
+        }).join('');
+
+        analysisHtml += `
+          <div class="fade-in glassmorphism p-5 rounded-xl border border-gray-700 hover:border-indigo-500 transition"
+               style="border-left: 4px solid ${color};">
+            <div class="flex justify-between items-start mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-3xl">${emoji}</span>
+                <div>
+                  <p class="text-xs text-gray-500">Test #${index + 1}</p>
+                  <p class="text-sm font-semibold text-gray-300">"${item.text.substring(0, 50)}${item.text.length > 50 ? '...' : ''}"</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <p class="text-xs text-gray-500">${date}</p>
+                ${cacheTag}
+              </div>
+            </div>
+
+            <div class="mb-3 p-3 rounded-lg" style="background: ${color}20;">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-xs text-gray-400">Dominant Emotion</p>
+                  <p class="text-lg font-bold uppercase" style="color: ${color};">${dominant.label}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-2xl font-bold" style="color: ${color};">${dominant.confidence_percent}%</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-xs space-y-1 text-gray-400">
+              <p class="mb-2"><span class="font-semibold text-gray-300">Top Emotions:</span> ${topThree}</p>
+              <div class="grid grid-cols-3 gap-2 pt-2 border-t border-gray-700">
+                <p><i class="fas fa-font mr-1"></i> ${item.input_length} chars</p>
+                <p><i class="fas fa-coins mr-1"></i> ${item.token_count} tokens</p>
+                <p><i class="fas fa-clock mr-1"></i> ${item.processing_time_ms}ms</p>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = analysisHtml;
+    };
+
+    // --- CHARTS ---
+
+    const initializeCharts = () => {
+      const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: '#9CA3AF',
+              font: { size: 12, family: 'system-ui' }
+            }
+          }
+        }
+      };
+
+      // Emotion Distribution
+      const ctx1 = document.getElementById('emotion-chart').getContext('2d');
+      emotionChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Count',
+            data: [],
+            backgroundColor: [],
+            borderColor: [],
+            borderWidth: 2,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          ...chartOptions,
+          indexAxis: 'y',
+          scales: {
+            x: {
+              ticks: { color: '#9CA3AF' },
+              grid: { color: 'rgba(99, 102, 241, 0.1)' },
+              border: { display: false }
+            },
+            y: {
+              ticks: { color: '#9CA3AF' },
+              grid: { display: false },
+              border: { display: false }
+            }
+          }
+        }
+      });
+
+      // Confidence Distribution
+      const ctx2 = document.getElementById('confidence-chart').getContext('2d');
+      confidenceChart = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Avg Confidence',
+            data: [],
+            backgroundColor: [],
+            borderColor: '#0F172A',
+            borderWidth: 3
+          }]
+        },
+        options: {
+          ...chartOptions,
+          plugins: {
+            ...chartOptions.plugins,
+            legend: {
+              ...chartOptions.plugins.legend,
+              position: 'bottom'
+            }
+          }
+        }
+      });
+
+      // Radar Chart
+      const ctx3 = document.getElementById('radar-chart').getContext('2d');
+      radarChart = new Chart(ctx3, {
+        type: 'radar',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Confidence %',
+            data: [],
+            borderColor: '#60A5FA',
+            backgroundColor: 'rgba(96, 165, 250, 0.15)',
+            borderWidth: 3,
+            pointBackgroundColor: '#60A5FA',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            fill: true
+          }]
+        },
+        options: {
+          ...chartOptions,
+          scales: {
+            r: {
+              ticks: { color: '#9CA3AF', backdropColor: 'transparent' },
+              grid: { color: 'rgba(99, 102, 241, 0.2)' },
+              border: { display: false },
+              max: 100
+            }
+          }
+        }
+      });
+    };
+
+    const updateAllCharts = (history) => {
+      updateEmotionChart(history);
+      updateConfidenceChart(history);
+      updateRadarChart(history);
+    };
+
+    const updateEmotionChart = (history) => {
+      if (!emotionChart) return;
+
+      const counts = {};
+      history.forEach(item => {
+        const label = item.dominant_emotion.label;
+        counts[label] = (counts[label] || 0) + 1;
+      });
+
+      const labels = Object.keys(counts).sort();
+      const data = labels.map(label => counts[label]);
+      const backgroundColors = labels.map(label => emotionColors[label.toLowerCase()] || emotionColors['neutral']);
+
+      emotionChart.data.labels = labels;
+      emotionChart.data.datasets[0].data = data;
+      emotionChart.data.datasets[0].backgroundColor = backgroundColors.map(c => `${c}99`);
+      emotionChart.data.datasets[0].borderColor = backgroundColors;
+      emotionChart.update();
+    };
+
+    const updateConfidenceChart = (history) => {
+      if (!confidenceChart) return;
+
+      const confidenceByEmotion = {};
+      const counts = {};
+
+      history.forEach(item => {
+        const label = item.dominant_emotion.label;
+        confidenceByEmotion[label] = (confidenceByEmotion[label] || 0) + item.dominant_emotion.confidence_percent;
+        counts[label] = (counts[label] || 0) + 1;
+      });
+
+      const labels = Object.keys(confidenceByEmotion).sort();
+      const avgConfidences = labels.map(label => parseFloat((confidenceByEmotion[label] / counts[label]).toFixed(1)));
+      const backgroundColors = labels.map(label => emotionColors[label.toLowerCase()] || emotionColors['neutral']);
+
+      confidenceChart.data.labels = labels;
+      confidenceChart.data.datasets[0].data = avgConfidences;
+      confidenceChart.data.datasets[0].backgroundColor = backgroundColors.map(c => `${c}40`);
+      confidenceChart.data.datasets[0].borderColor = backgroundColors;
+      confidenceChart.update();
+    };
+
+    const updateRadarChart = (history) => {
+      if (!radarChart) return;
+
+      const allEmotions = ['joy', 'anger', 'fear', 'sadness', 'surprise', 'disgust', 'neutral'];
+      const averageConfidence = {};
+
+      allEmotions.forEach(emotion => {
+        averageConfidence[emotion] = 0;
+      });
+
+      history.forEach(item => {
+        item.results.forEach(result => {
+          const label = result.label.toLowerCase();
+          if (averageConfidence.hasOwnProperty(label)) {
+            averageConfidence[label] += result.confidence_percent;
+          }
+        });
+      });
+
+      const data = allEmotions.map(emotion => {
+        const count = history.reduce((sum, item) =>
+          sum + (item.results.filter(r => r.label.toLowerCase() === emotion).length), 0
+        );
+        return count > 0 ? parseFloat((averageConfidence[emotion] / count).toFixed(1)) : 0;
+      });
+
+      radarChart.data.labels = allEmotions.map(e => {
+        const emoji = emotionEmojis[e] || '😐';
+        return emoji + ' ' + e.charAt(0).toUpperCase() + e.slice(1);
+      });
+      radarChart.data.datasets[0].data = data;
+      radarChart.update();
+    };
+
+    // --- MAIN API INTERACTION ---
+
+    window.analyzeText = async () => {
+      const inputEl = document.getElementById('text-input');
+      const buttonEl = document.getElementById('analyze-button');
+      const text = inputEl.value.trim();
+
+      if (!text) {
+        showNotification('Please enter some text to analyze', 'warning');
+        return;
+      }
+
+      // Check for duplicate
+      const duplicate = findDuplicateAnalysis(text);
+      if (duplicate) {
+        renderResult(duplicate);
+        updateHistoryAndUI(duplicate, true);
+        showNotification(`✨ Found in cache! Same text analyzed before.`, 'success', 2000);
+        document.getElementById('result-badge').classList.remove('hidden');
+        return;
+      }
+
+      buttonEl.disabled = true;
+      buttonEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+
+      try {
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: text })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+
+        const result = await response.json();
+        renderResult(result);
+        updateHistoryAndUI(result, false);
+        document.getElementById('result-badge').classList.add('hidden');
+        showNotification(`✅ Analysis complete! ${emotionEmojis[result.dominant_emotion.label] || '😐'} ${result.dominant_emotion.label}`, 'success');
+
+      } catch (error) {
+        console.error("API call failed:", error);
+        showNotification(`❌ Error: ${error.message}. Make sure your API server is running!`, 'error', 4000);
+        document.getElementById('result-content').innerHTML = `
+          <div class="text-center py-12">
+            <i class="fas fa-exclamation-circle text-red-500 text-4xl mb-4"></i>
+            <p class="text-red-400">Could not connect to API</p>
+            <p class="text-gray-500 text-sm mt-2">Ensure your FastAPI server is running on http://127.0.0.1:8000</p>
+          </div>
+        `;
+      } finally {
+        buttonEl.disabled = false;
+        buttonEl.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Analyze Emotion';
+      }
+    };
+
+    // Allow Enter key to analyze
+    document.getElementById('text-input').addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        analyzeText();
+      }
+    });
+
+    // --- INITIALIZATION ---
+
+    window.onload = () => {
+      initializeCharts();
+      const initialHistory = loadHistoryFromLocalStorage();
+      renderHistoryLog(initialHistory);
+      updateAllCharts(initialHistory);
+      updateAggregateStats(initialHistory);
+      updateIndividualAnalysis(initialHistory);
+      document.getElementById('history-count').textContent = initialHistory.length;
+      showNotification('🚀 Welcome to EmotiOnAI! Start analyzing emotions.', 'info', 3000);
+    };
+
+  </script>
+
+</body>
+
+</html>
