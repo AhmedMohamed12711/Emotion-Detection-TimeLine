@@ -1,0 +1,69 @@
+Chapter 4: Artificial Intelligence Models
+4.1 Introduction to AI Models Used
+4.2 Emotion Classification Framework
+4.3 Text-Based Emotion Detection Model
+
+4.3.1 Model Overview
+
+4.3.2 Model Selection and Justification
+
+4.3.3 Emotion Labels and Categories
+
+4.3.4 Text Preprocessing and Sentence Segmentation
+
+4.3.5 Sentence-Level Emotion Analysis
+
+4.3.6 Emotional Intensity Weighting Mechanism
+
+4.3.7 Full-Text Emotion Analysis
+
+4.3.8 Emotion Fusion Strategy
+
+4.3.9 Timeline Interpretation for Text
+
+4.3.10 API and Microservice Integration
+
+4.3.11 Model Limitations
+
+4.4 Audio-Based Emotion Detection Model
+
+4.4.1 Model Overview
+
+4.4.2 Audio Preprocessing and Segmentation
+
+4.4.3 Feature Extraction
+
+4.4.4 Emotion Classification Process
+
+4.4.5 Timeline Generation for Audio
+
+4.4.6 Model Limitations
+
+4.5 Image-Based Emotion Detection Model
+
+4.5.1 Model Overview
+
+4.5.2 Facial Detection and Preprocessing
+
+4.5.3 Emotion Prediction from Images
+
+4.5.4 Model Limitations
+
+4.6 Video-Based Emotion Detection Model
+
+4.6.1 Model Overview
+
+4.6.2 Frame Extraction and Processing
+
+4.6.3 Frame-Level Emotion Analysis
+
+4.6.4 Temporal Emotion Tracking
+
+4.6.5 Model Limitations
+
+4.7 Multimodal Emotion Processing Strategy
+4.8 Emotion Timeline Generation Mechanism
+4.9 System Integration and Data Flow
+4.10 Performance Considerations
+4.11 Overall Limitations and Challenges
+4.12 Chapter Summary
